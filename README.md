@@ -25,6 +25,7 @@ Cadence Virtuoso Design Management System using svn
 tool安装步骤
 1、下载解压数据包到某个路径；
 2、修改lspcdsdmsvn.cshrc第一行的路径为解压之后的路径；
+3、cd $LSPCDSDMSVN_HOME/bin目录，查看里面所有的文件是否是可执行状态，如果不是，执行chmod +x *
 
 使用步骤
 1、在cds library的同级目录下执行lspcdsdmsvn_init；如果已经执行过无需再执行；(手动初始化可以参考lspcdsdmsvn_init脚本步骤)
