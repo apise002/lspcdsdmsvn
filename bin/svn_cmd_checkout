@@ -1,0 +1,124 @@
+#! /bin/csh -f
+
+set lib_dir  = `echo $argv[1] | awk -F\= '{print $2}'`
+set lib      = `echo $argv[2] | awk -F\= '{print $2}'`
+set cell     = `echo $argv[3] | awk -F\= '{print $2}'`
+set view     = `echo $argv[4] | awk -F\= '{print $2}'`
+set cat      = `echo $argv[5] | awk -F\= '{print $2}'`
+
+###########################################################################################################
+set lib_dir      = `echo $lib_dir | sed -r 's#/+#/#g' | sed 's#/$##'`
+set timetag      = `date +%Y%m%d%H%M%S`
+set tmp_file_log = /tmp/${user}_lspcdsdmsvn_log_${timetag}
+set tmp_file_st  = /tmp/${user}_lspcdsdmsvn_st_${timetag}
+###########################################################################################################
+
+
+###########################################################################################################
+if !($?LSPCDSDMSVN_HOME) then
+    echo "ERROR : Please source lspcdsdmsvn.cshrc firstly." >&! $tmp_file_log
+	goto Report
+endif
+
+set ignore_key  = `sed 's/\s\+//g' $LSPCDSDMSVN_HOME/config/ignore.cfg  | grep -Ev '^\s*#|^\s*$' | sed -n '1{h};2,${H};${g;s/\n/|/g;p}'`
+set include_key = `sed 's/\s\+//g' $LSPCDSDMSVN_HOME/config/include.cfg | grep -Ev '^\s*#|^\s*$' | sed -n '1{h};2,${H};${g;s/\n/|/g;p}'`
+###########################################################################################################
+
+
+###########################################################################################################
+###########################################################################################################
+echo "[INFOR] SVN Check Out ..." >&! $tmp_file_log
+if (($lib != "") && ($cell == "") && ($view == "") && ($cat == "")) then
+    ####lib
+	if (`find $lib_dir/$lib -maxdepth 3 -name "*cdslck*" -type f | wc -l`) then
+	    echo "ERROR : some cell or file is locked. Please find *cdslck* and clean firstly" >>&! $tmp_file_log
+		goto Report
+	else
+        set svn_cmd_dir = $lib_dir/$lib
+		set find_level  = 3
+	endif
+else if (($lib != "") && ($cell == "") && ($view == "") && ($cat != "")) then
+    ####category file
+	if ($cat == "Empty") then
+	    set svn_cmd_dir = (`find $lib_dir/$lib -maxdepth 1 -name "*.Cat" -or -name "$lib.TopCat" -type f`)
+	else if ($cat == "Everything") then
+		set svn_cmd_dir = $lib_dir/$lib/$lib.TopCat
+	else if ($cat == "Uncategorized") then
+	    echo "WARNING : Uncategorized is selected, nothing to do" >>&! $tmp_file_log
+	    goto Report
+	else
+        set svn_cmd_dir = $lib_dir/$lib/$cat.Cat
+	endif
+	set find_level  = 1
+else if (($lib != "") && ($cell != "") && ($view == "")) then
+    ####cell is folder/file
+	if (`find $lib_dir/$lib/$cell -maxdepth 2 -name "*cdslck*" -type f | wc -l`) then
+	    echo "ERROR : some cell or file is locked. Please find *cdslck* and clean firstly" >>&! $tmp_file_log
+		goto Report
+	else
+        set svn_cmd_dir = $lib_dir/$lib/$cell
+		set find_level  = 2
+	endif
+else if (($lib != "") && ($cell != "") && ($view != "")) then
+    ####view is folder/file
+    if (`find $lib_dir/$lib/$cell/$view -maxdepth 1 -name "*cdslck*" -type f | wc -l`) then
+	    echo "ERROR : some cell or file is locked. Please find *cdslck* and clean firstly" >>&! $tmp_file_log
+		goto Report
+	else
+        set svn_cmd_dir = $lib_dir/$lib/$cell/$view
+		set find_level  = 1
+	endif
+else
+    echo "ERROR : args case is not supported" >>&! $tmp_file_log
+	echo "      : args =lib=cell=view=cat= : =$lib=$cell=$view=$cat=" >>&! $tmp_file_log
+	goto Report
+endif
+
+
+###########################################################################################################
+###########################################################################################################
+echo $svn_cmd_dir | xargs -n 1 | xargs -i echo "    path => {}" >>&! $tmp_file_log
+echo "" >>&! $tmp_file_log
+
+foreach item (`find $svn_cmd_dir -maxdepth $find_level -type f | sed "s#$lib_dir/$lib/##"`)
+    if ((`echo $item | sed -r "s/(.)/\1\n/g" | grep -c "/"` == 2) && (`echo $item | grep -Ec "$include_key"`) || \
+        (`echo $item | sed -r "s/(.)/\1\n/g" | grep -c "/"` == 1) && (`echo $item | grep -Evc "$ignore_key"`) || \
+        (`echo $item | sed -r "s/(.)/\1\n/g" | grep -c "/"` == 0) && (`echo $item | grep -Evc "$ignore_key"`)    ) then
+        svn st $lib_dir/$lib/$item >&! $tmp_file_st
+	    if (($status != 0) || (`cat $tmp_file_st | grep -Ec "\sW[0-9]+:\s|\sE[0-9]+:\s"`)) then
+            cat $tmp_file_st >>&! $tmp_file_log
+	    	echo "  ==> Above ERROR at step 1" >>&! $tmp_file_log
+	        goto Report
+        endif
+	    if !(`cat $tmp_file_st | wc -l`) then
+	        svn lock $lib_dir/$lib/$item >&! $tmp_file_st
+	    	if (($status != 0) || (`cat $tmp_file_st | grep -Ec "\sW[0-9]+:\s|\sE[0-9]+:\s"`)) then
+			    cat $tmp_file_st >>&! $tmp_file_log
+	    	    echo "  ==> Above ERROR at step 2" >>&! $tmp_file_log
+	            goto Report
+            endif
+			cat $tmp_file_st >>&! $tmp_file_log
+	    else if (`cat $tmp_file_st | grep -Ec '(^|\s)K\s'`) then
+		    cat $tmp_file_st >>&! $tmp_file_log
+		else
+	        cat $tmp_file_st >>&! $tmp_file_log
+	    	echo "  ==> Above ERROR at step 3" >>&! $tmp_file_log
+	        goto Report
+	    endif
+	endif
+end
+
+####for skill callback
+echo "[INFOR] Check Out succeeful." >>&! $tmp_file_log
+echo "succeed"
+
+
+###########################################################################################################
+###########################################################################################################
+Report:
+echo "" >>&! $tmp_file_log
+echo "[INFOR] any problem or question, contact apise_001@163.com" >>&! $tmp_file_log
+zenity --title=lspCDSDMSVN_CheckOut --width=1200 --height=400 --text-info --filename=$tmp_file_log
+
+\rm -rf $tmp_file_log
+\rm -rf $tmp_file_st

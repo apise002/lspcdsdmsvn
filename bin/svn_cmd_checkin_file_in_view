@@ -1,0 +1,23 @@
+#! /bin/csh -f
+
+set file = $1
+
+set include_key = `sed 's/\s\+//g' $LSPCDSDMSVN_HOME/config/include.cfg  | grep -Ev '^\s*#|^\s*$' | sed -n '1{h};2,${H};${g;s/\n/|/g;p}'`
+
+if ($include_key != "") then
+    set flag = `echo $file | grep -Ec "$include_key"`
+else
+    set flag = 0
+endif
+
+if ($flag == "") then
+    exit(1)
+else if ($flag == 0) then
+    exit(0)
+else
+    svn add --parents $file
+    if ($status != 0) exit(1)
+    svn propset svn:needs-lock on $file
+    if ($status != 0) exit(1)
+    exit(0)
+endif

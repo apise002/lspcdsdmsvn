@@ -1,0 +1,56 @@
+#! /bin/csh -f
+
+set svn_url         = $1
+set flag_add2cdslib = $2
+set workdir         = $3
+
+###########################################################################################################
+set timetag      = `date +%Y%m%d%H%M%S`
+set tmp_file_log = /tmp/${user}_lspcdsdmsvn_log_${timetag}
+###########################################################################################################
+
+if ($#argv != 3) then
+    echo "ERROR : args incorrect" >&! $tmp_file_log
+    goto Report
+endif
+
+set lib_name = `echo $svn_url | xargs basename `
+set cdslib   = $workdir/cds.lib
+
+echo "[INFOR] SVN URL Check Out => $svn_url" >&! $tmp_file_log
+echo "" >>&! $tmp_file_log
+
+svn co $svn_url >>&! $tmp_file_log
+if ($status != 0) then
+	echo "ERROR : initial failed, svn co error" >>&! $tmp_file_log
+	goto Report
+endif
+
+if ($flag_add2cdslib == 1) then
+    if (-e $cdslib) then
+        if (`grep -Eci "DEFINE\s+$lib_name\s+" $cdslib`) then
+	        sed -ri "s#(DEFINE\s+$lib_name\s+).*#\1$workdir/$lib_name#" $cdslib
+        else
+	        echo "DEFINE  $lib_name    $workdir/$lib_name" >> $cdslib
+	    endif
+		echo "INFOR : initial succeed" >>&! $tmp_file_log
+	else
+	    echo "ERROR : initial failed, cds.lib not exist at $cdslib." >>&! $tmp_file_log
+		goto Report
+	endif
+else
+    echo "INFOR : initial succeed" >>&! $tmp_file_log
+endif
+
+####for skill callback
+echo "succeed"
+
+
+###########################################################################################################
+###########################################################################################################
+Report:
+echo "" >>&! $tmp_file_log
+echo "[INFOR] any problem or question, contact apise_001@163.com" >>&! $tmp_file_log
+zenity --title=lspCDSDMSVN_Init --width=1200 --height=400 --text-info --filename=$tmp_file_log
+
+\rm -rf $tmp_file_log

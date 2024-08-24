@@ -1,0 +1,15 @@
+#! /bin/csh -f
+
+set dir = $1
+
+foreach item (`find $dir -maxdepth 1 -type f`)
+    $LSPCDSDMSVN_HOME/bin/svn_cmd_checkin_file_out_view $item
+	if ($status != 0) exit(1)
+end
+
+foreach item (`find $dir -maxdepth 1 -type d`)
+    $LSPCDSDMSVN_HOME/bin/svn_cmd_checkin_view $item
+	if ($status != 0) exit(1)
+end
+
+exit(0)

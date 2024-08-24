@@ -1,0 +1,32 @@
+#! /bin/csh -f
+
+set cds_dir = $1
+
+if ($cds_dir == "") then
+    set cds_dir = ./
+else if !(-d $cds_dir) then
+    echo "ERROR : cds path is not existed => $cds_dir"
+	exit(1)
+endif
+endif
+
+if !($?LSPCDSDMSVN_HOME) then
+    echo "ERROR : Please source lspcdsdmsvn.cshrc firstly."
+	exit(1)
+endif
+
+if !(-e $LSPCDSDMSVN_HOME/setup/cdsLibMgr.il) then
+    echo "ERROR : LSPCDSDMSVN_HOME INCORRECT. Please Check."
+	echo "        LSPCDSDMSVN_HOME = $LSPCDSDMSVN_HOME"
+	exit(1)
+else
+    \cp -rf $LSPCDSDMSVN_HOME/setup/cdsLibMgr.il $cds_dir
+endif
+
+if (-e $cds_dir/.cdsinit) then
+    if !(`grep -c LSPCDSDMSVN_HOME $cds_dir/.cdsinit`) then
+        echo 'load(strcat(getShellEnvVar("LSPCDSDMSVN_HOME") "/setup/init.il"))' >> $cds_dir/.cdsinit
+    endif
+else
+    echo 'load(strcat(getShellEnvVar("LSPCDSDMSVN_HOME") "/setup/init.il"))' >! $cds_dir/.cdsinit
+endif

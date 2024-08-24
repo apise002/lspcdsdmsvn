@@ -1,0 +1,86 @@
+#! /bin/csh -f
+
+set lib_dir  = `echo $argv[1] | awk -F\= '{print $2}'`
+set lib      = `echo $argv[2] | awk -F\= '{print $2}'`
+set cell     = `echo $argv[3] | awk -F\= '{print $2}'`
+set view     = `echo $argv[4] | awk -F\= '{print $2}'`
+set cat      = `echo $argv[5] | awk -F\= '{print $2}'`
+
+###########################################################################################################
+set lib_dir      = `echo $lib_dir | sed -r 's#/+#/#g' | sed 's#/$##'`
+set timetag      = `date +%Y%m%d%H%M%S`
+set tmp_file_log = /tmp/${user}_lspcdsdmsvn_log_${timetag}
+set tmp_file_st  = /tmp/${user}_lspcdsdmsvn_st_${timetag}
+###########################################################################################################
+
+
+###########################################################################################################
+if !($?LSPCDSDMSVN_HOME) then
+    echo "ERROR : Please source lspcdsdmsvn.cshrc firstly." >&! $tmp_file_log
+	goto Report
+endif
+
+set ignore_key  = `sed 's/\s\+//g' $LSPCDSDMSVN_HOME/config/ignore.cfg  | grep -Ev '^\s*#|^\s*$' | sed -n '1{h};2,${H};${g;s/\n/|/g;p}'`
+set include_key = `sed 's/\s\+//g' $LSPCDSDMSVN_HOME/config/include.cfg | grep -Ev '^\s*#|^\s*$' | sed -n '1{h};2,${H};${g;s/\n/|/g;p}'`
+###########################################################################################################
+
+
+###########################################################################################################
+###########################################################################################################
+echo "[INFOR] SVN Update ..." >&! $tmp_file_log
+if (($lib != "") && ($cell == "") && ($view == "") && ($cat == "")) then
+    ####lib
+    set svn_cmd_dir = $lib_dir/$lib
+else if (($lib != "") && ($cell == "") && ($view == "") && ($cat != "")) then
+    ####category file
+	if ($cat == "Empty") then
+	    set svn_cmd_dir = (`find $lib_dir/$lib -maxdepth 1 -name "*.Cat" -or -name "$lib.TopCat" -type f`)
+	else if ($cat == "Everything") then
+		set svn_cmd_dir = $lib_dir/$lib/$lib.TopCat
+	else if ($cat == "Uncategorized") then
+	    echo "WARNING : Uncategorized is selected, nothing to do" >>&! $tmp_file_log
+	    goto Report
+	else
+        set svn_cmd_dir = $lib_dir/$lib/$cat.Cat
+	endif
+else if (($lib != "") && ($cell != "") && ($view == "")) then
+    ####cell is folder/file
+    set svn_cmd_dir = $lib_dir/$lib/$cell
+else if (($lib != "") && ($cell != "") && ($view != "")) then
+    ####view is folder/file
+    set svn_cmd_dir = $lib_dir/$lib/$cell/$view
+else
+    echo "ERROR : args case is not supported" >>&! $tmp_file_log
+	echo "      : args =lib=cell=view=cat= : =$lib=$cell=$view=$cat=" >>&! $tmp_file_log
+	goto Report
+endif
+
+
+###########################################################################################################
+###########################################################################################################
+echo $svn_cmd_dir | xargs -n 1 | xargs -i echo "    path => {}" >>&! $tmp_file_log
+echo "" >>&! $tmp_file_log
+
+svn up --accept mc $svn_cmd_dir >&! $tmp_file_st
+if (($status != 0) || (`cat $tmp_file_st | grep -Ec "\sW[0-9]+:\s|\sE[0-9]+:\s"`)) then
+    cat $tmp_file_st >>&! $tmp_file_log
+	echo "  ==> Above ERROR" >>&! $tmp_file_log
+	goto Report
+endif
+
+cat $tmp_file_st >>&! $tmp_file_log
+
+####for skill callback
+echo "[INFOR] Update succeeful." >>&! $tmp_file_log
+echo "succeed"
+
+
+###########################################################################################################
+###########################################################################################################
+Report:
+echo "" >>&! $tmp_file_log
+echo "[INFOR] any problem or question, contact apise_001@163.com" >>&! $tmp_file_log
+zenity --title=lspCDSDMSVN_Update --width=1200 --height=400 --text-info --filename=$tmp_file_log
+
+\rm -rf $tmp_file_log
+\rm -rf $tmp_file_st
