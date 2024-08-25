@@ -4,7 +4,7 @@ Cadence Virtuoso Design Management System using svn<br>
 ## 工具说明<br>
 1、基于svn的virtuoso library管理工具，多人协作，共同开发virtuoso library数据；<br>
 2、支持最基本的svn cmd，实现library管理功能，未完全使用完整的svn功能；<br>
-3、支持init、、checkin、checkout、cancel checkout、update、status、tag、delete功能；<br>
+3、支持init、checkin、checkout、cancel checkout、update、status、tag、delete功能；<br>
 &ensp;&ensp;init：从svn server下载library，等同svn co；<br>
 &ensp;&ensp;checkin：上传本地数据，并关闭写权限，完成之后无法修改文件，需要通过checkout修改，防止多人同时修改，等同svn ci；<br>
 &ensp;&ensp;checkout：锁住要修改的数据，防止其他人同时修改，并打开写权限，等同svn lock；<br>
