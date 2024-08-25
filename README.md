@@ -5,14 +5,14 @@ Cadence Virtuoso Design Management System using svn<br>
 1、基于svn的virtuoso library管理工具，多人协作，共同开发virtuoso library数据；<br>
 2、支持最基本的svn cmd，实现library管理功能，未完全使用完整的svn功能；<br>
 3、支持init、、checkin、checkout、cancel checkout、update、status、tag、delete功能；<br>
-    init：从svn server下载library，等同svn co；<br>
-    checkin：上传本地数据，并关闭写权限，完成之后无法修改文件，需要通过checkout修改，防止多人同时修改，等同svn ci；<br>
-	checkout：锁住要修改的数据，防止其他人同时修改，并打开写权限，等同svn lock；<br>
-	cancel checkout：丢弃本地数据，同步svn server中最新的数据，并关闭写权限；等同svn unlock+svn revert；<br>
-	update：从server下载最新的数据，等同svn up；<br>
-	status：查看本地数据的状态，包括是否修改、lock等，等同svn st；<br>
-	tag：标记某些版本，记录信息，方便查询；<br>
-	delete：删除数据，支持本地或者svn可选；<br>
+&ensp;&ensp;init：从svn server下载library，等同svn co；<br>
+&ensp;&ensp;checkin：上传本地数据，并关闭写权限，完成之后无法修改文件，需要通过checkout修改，防止多人同时修改，等同svn ci；<br>
+&ensp;&ensp;checkout：锁住要修改的数据，防止其他人同时修改，并打开写权限，等同svn lock；<br>
+&ensp;&ensp;cancel checkout：丢弃本地数据，同步svn server中最新的数据，并关闭写权限；等同svn unlock+svn revert；<br>
+&ensp;&ensp;update：从server下载最新的数据，等同svn up；<br>
+&ensp;&ensp;status：查看本地数据的状态，包括是否修改、lock等，等同svn st；<br>
+&ensp;&ensp;tag：标记某些版本，记录信息，方便查询；<br>
+&ensp;&ensp;delete：删除数据，支持本地或者svn可选；<br>
 4、不具有svn创建library的能力，需要管理员提前准备好library的svn创建，可以是空的library；<br>
 5、如果有一些library/cell不需要进行svn管理，可以在config目录下的ignore.cfg中添加，支持egrep的正则匹配；<br>
 6、如果有cellview下面的文件需要进行svn管理，可以在config目录下的include.cfg中添加，支持egrep的正则匹配；<br>
