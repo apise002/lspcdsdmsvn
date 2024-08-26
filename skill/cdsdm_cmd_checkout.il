@@ -4,7 +4,7 @@
 procedure( cdsdm_checkout(lib cell view cat)
   let( ( tmp_dir lib_dir i cmd cid result )
 
-    when ( cdsdm_checkout_form()
+    when( cdsdm_checkout_form()
 
 	  tmp_dir = ddGetObjReadPath(ddGetObj(lib))
 	  lib_dir = ""
@@ -31,10 +31,8 @@ procedure( cdsdm_checkout_form()
 	?name		'cdsdm_checkout_form
 	?dboxBanner	"Warning"
 	?dboxText   "Do you want to checkout?"
-	?buttonLayout	'(OKCancel)
+	?buttonLayout	'OKCancel
     )
-
-    hiDisplayForm('cdsdm_checkin_form)
 
   )
 )

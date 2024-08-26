@@ -31,10 +31,8 @@ procedure( cdsdm_cancel_form()
 	?name		'cdsdm_cancel_form
 	?dboxBanner	"Warning"
 	?dboxText   "Do you want to cancel checkout?"
-	?buttonLayout	'(OKCancel)
+	?buttonLayout	'OKCancel
     )
-
-    hiDisplayForm('cdsdm_cancel_form)
 
   )
 )

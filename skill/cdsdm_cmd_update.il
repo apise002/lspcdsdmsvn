@@ -35,10 +35,8 @@ procedure( cdsdm_update_form()
 	?name		'cdsdm_update_form
 	?dboxBanner	"Warning"
 	?dboxText   "Do you want to update?"
-	?buttonLayout	'(OKCancel)
+	?buttonLayout	'OKCancel
     )
-
-    hiDisplayForm('cdsdm_update_form)
 
   )
 )
