@@ -50,6 +50,11 @@ lmgrCreateMenuItem( "cdsdm_lmgr_status" "simple"
       ("callback" ("cdsdm_lmgr_proc"))
      )
 )
+lmgrCreateMenuItem( "cdsdm_lmgr_history" "simple"
+    '(("label"	"History ...")
+      ("callback" ("cdsdm_lmgr_proc"))
+     )
+)
 lmgrCreateMenuItem( "cdsdm_lmgr_tag_add" "simple"
     '(("label"	"Tag Add ...")
       ("callback" ("cdsdm_lmgr_proc"))
@@ -69,7 +74,14 @@ lmgrCreateMenuItem( "cdsdm_lmgr_xterm" "simple"
 lmgrAddMenuItems( "cdsdmCascade" "LCVlcv"  '(
 		"cdsdm_lmgr_sep1" "cdsdm_lmgr_init"
 		"cdsdm_lmgr_sep2" "cdsdm_lmgr_checkin" "cdsdm_lmgr_checkout" "cdsdm_lmgr_cancel" "cdsdm_lmgr_delete" "cdsdm_lmgr_update" "cdsdm_lmgr_status"
+) )
+lmgrAddMenuItems( "cdsdmCascade" "Vv"  '(
+		                  "cdsdm_lmgr_history"
+) )
+lmgrAddMenuItems( "cdsdmCascade" "Ll"  '(
 		                  "cdsdm_lmgr_tag_add" "cdsdm_lmgr_tag_info"
+) )
+lmgrAddMenuItems( "cdsdmCascade" "LCVlcv"  '(
 		"cdsdm_lmgr_sep3" "cdsdm_lmgr_xterm"
 ) )
 

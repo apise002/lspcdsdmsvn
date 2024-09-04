@@ -10,6 +10,7 @@ procedure( cdsdm_lmgr_proc( @optional lmgr lib cell view dum cat )
 		( "cdsdm_lmgr_delete"	    cdsdm_delete(lib cell view "")    )
         ( "cdsdm_lmgr_update"	    cdsdm_update(lib cell view "")    )
         ( "cdsdm_lmgr_status"	    cdsdm_status(lib cell view "")    )
+		( "cdsdm_lmgr_history"	    cdsdm_history(lib cell view "")  )
 		( "cdsdm_lmgr_tag_add"	    cdsdm_tag_add(lib)                )
 		( "cdsdm_lmgr_tag_info"	    cdsdm_tag_info(lib)               )
         ( "cdsdm_lmgr_xterm"	    cdsdm_xterm(lib cell view cat)    )
@@ -34,7 +35,7 @@ procedure( cdsdm_lmgr_popup( @optional lmgr lib cell view dum cat )
       cdsdm_lmgr_cb( lmgr lib cell view dum cat )
     else
 	  lmgrManageMenuItems( list( 
-		            "cdsdm_lmgr_sep2" "cdsdm_lmgr_checkin" "cdsdm_lmgr_checkout" "cdsdm_lmgr_cancel" "cdsdm_lmgr_delete" "cdsdm_lmgr_update" "cdsdm_lmgr_status"
+		            "cdsdm_lmgr_sep2" "cdsdm_lmgr_checkin" "cdsdm_lmgr_checkout" "cdsdm_lmgr_cancel" "cdsdm_lmgr_delete" "cdsdm_lmgr_update" "cdsdm_lmgr_status" "cdsdm_lmgr_history"
 					                  "cdsdm_lmgr_tag_add" "cdsdm_lmgr_tag_info"
 					"cdsdm_lmgr_sep4" "cdsdm_lmgr_cat_checkin" "cdsdm_lmgr_cat_checkout" "cdsdm_lmgr_cat_cancel"
 		                              "cdsdm_lmgr_cat_delete"  "cdsdm_lmgr_cat_update"   "cdsdm_lmgr_cat_status"
@@ -50,7 +51,7 @@ procedure( cdsdm_lmgr_cb(@optional lmgr lib cell view dum cat )
 
 	    lmgrManageMenuItems( list(
 	                "cdsdm_lmgr_sep1" "cdsdm_lmgr_init"
-		            "cdsdm_lmgr_sep2" "cdsdm_lmgr_checkin" "cdsdm_lmgr_checkout" "cdsdm_lmgr_cancel" "cdsdm_lmgr_delete" "cdsdm_lmgr_update" "cdsdm_lmgr_status"
+		            "cdsdm_lmgr_sep2" "cdsdm_lmgr_checkin" "cdsdm_lmgr_checkout" "cdsdm_lmgr_cancel" "cdsdm_lmgr_delete" "cdsdm_lmgr_update" "cdsdm_lmgr_status" "cdsdm_lmgr_history"
 					                  "cdsdm_lmgr_tag_add" "cdsdm_lmgr_tag_info"
 		            "cdsdm_lmgr_sep3" "cdsdm_lmgr_xterm"
 					"cdsdm_lmgr_sep4" "cdsdm_lmgr_cat_checkin" "cdsdm_lmgr_cat_checkout" "cdsdm_lmgr_cat_cancel"
@@ -58,7 +59,7 @@ procedure( cdsdm_lmgr_cb(@optional lmgr lib cell view dum cat )
 				          ) t )
     else
 	    lmgrManageMenuItems( list( 
-		            "cdsdm_lmgr_sep2" "cdsdm_lmgr_checkin" "cdsdm_lmgr_checkout" "cdsdm_lmgr_cancel" "cdsdm_lmgr_delete" "cdsdm_lmgr_update" "cdsdm_lmgr_status"
+		            "cdsdm_lmgr_sep2" "cdsdm_lmgr_checkin" "cdsdm_lmgr_checkout" "cdsdm_lmgr_cancel" "cdsdm_lmgr_delete" "cdsdm_lmgr_update" "cdsdm_lmgr_status" "cdsdm_lmgr_history"
 					                  "cdsdm_lmgr_tag_add" "cdsdm_lmgr_tag_info"
 					"cdsdm_lmgr_sep4" "cdsdm_lmgr_cat_checkin" "cdsdm_lmgr_cat_checkout" "cdsdm_lmgr_cat_cancel"
 		                              "cdsdm_lmgr_cat_delete"  "cdsdm_lmgr_cat_update"   "cdsdm_lmgr_cat_status"
