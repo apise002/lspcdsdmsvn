@@ -4,7 +4,7 @@
 procedure( cdsdm_update(lib cell view cat)
   let( ( tmp_dir lib_dir i cmd cid result )
 
-    when ( cdsdm_update_form()
+    when( cdsdm_update_form()
 
 	  tmp_dir = ddGetObjReadPath(ddGetObj(lib))
 	  lib_dir = ""
