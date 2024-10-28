@@ -14,6 +14,13 @@ if ($#argv != 3) then
     goto Report
 endif
 
+###########################################################################################################
+if (`/bin/ls -ld $workdir | awk '{print $3}'` != $user) then
+    echo "ERROR : Permission Denied. You are not owner. File belong to user: $user." >>&! $tmp_file_log
+	goto Report
+endif
+###########################################################################################################
+
 set lib_name = `echo $svn_url | xargs basename `
 set cdslib   = $workdir/cds.lib
 
