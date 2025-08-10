@@ -19,8 +19,8 @@ Cadence Virtuoso Design Management System using svn<br>
 <br>
 ## 环境必备<br>
 1、必须安装csh，路径/bin/csh；如果非此路径，请修改bin目录下所有文件中的csh路径为当前系统的csh路径<br>
-2、必须有ls、chmod、cp、gzip等基础的shell cmd，没有的话需要先安装；
-3、检查setup/init.il第39~43行，确定csh cmd的路径，如果不一样，需要手动修改适配；
+2、必须有ls、chmod、cp、gzip等基础的shell cmd，没有的话需要先安装；<br>
+3、检查setup/init.il第39~43行，确定csh cmd的路径，如果不一样，需要手动修改适配；<br>
 4、必须安装zenity；<br>
 5、必须安装svn，建议版本为1.7及以上，本项目使用1.8；<br>
 <br>
