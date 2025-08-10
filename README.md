@@ -19,8 +19,10 @@ Cadence Virtuoso Design Management System using svn<br>
 <br>
 ## 环境必备<br>
 1、必须安装csh，路径/bin/csh；如果非此路径，请修改bin目录下所有文件中的csh路径为当前系统的csh路径<br>
-2、必须安装zenity；<br>
-3、必须安装svn，建议版本为1.7及以上，本项目使用1.8；<br>
+2、必须有ls、chmod、cp、gzip等基础的shell cmd，没有的话需要先安装；
+3、检查setup/init.il第39~43行，确定csh cmd的路径，如果不一样，需要手动修改适配；
+4、必须安装zenity；<br>
+5、必须安装svn，建议版本为1.7及以上，本项目使用1.8；<br>
 <br>
 ## tool安装步骤<br>
 1、下载解压数据包到某个路径；<br>
@@ -28,7 +30,7 @@ Cadence Virtuoso Design Management System using svn<br>
 3、cd $LSPCDSDMSVN_HOME/bin目录，查看里面所有的文件是否是可执行状态，如果不是，执行chmod +x *；<br>
 <br>
 ## config说明<br>
-项目中config文件夹有2个cfg，说明如下：<br>
+项目中config文件夹有2个cfg，说明如下，根据自身项目进行修改适配：<br>
 ignore.cfg：只作用到libname和cellname下的文件或者文件夹，指定某些pattern的文件或者文件夹不进行svn管理，默认进行管理。语法为egrep的正则；<br>
 include.cfg：只作用到viewname下的文件，指定某些pattern的文件进行svn管理，默认不进行管理。语法为egrep的正则；<br>
 <br>
