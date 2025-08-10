@@ -1,11 +1,12 @@
 #! /bin/csh -f
 
 set file = $1
+set filename = `basename $file`
 
 set include_key = `sed 's/\s\+//g' $LSPCDSDMSVN_HOME/config/include.cfg  | grep -Ev '^\s*#|^\s*$' | sed -n '1{h};2,${H};${g;s/\n/|/g;p}'`
 
 if ($include_key != "") then
-    set flag = `echo $file | grep -Ec "$include_key"`
+    set flag = `echo $filename | grep -Ec "$include_key"`
 else
     set flag = 0
 endif

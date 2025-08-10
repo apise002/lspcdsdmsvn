@@ -61,10 +61,38 @@ else
     	set ver   = `echo $line | sed -r "s/(\S+)\s+(\S+)\s+(\S+\s+\S+)\s+.*/\1/"`
     	set owner = `echo $line | sed -r "s/(\S+)\s+(\S+)\s+(\S+\s+\S+)\s+.*/\2/"`
     	set time  = `echo $line | sed -r "s/(\S+)\s+(\S+)\s+(\S+\s+\S+)\s+.*/\3/"`
-    	set context = ($context $ver $owner \"$time\")
+    	set context = ($context FALSE $ver $owner \"$time\")
     end
-    set cmd = 'zenity --list --title=lspCDSDMSVN_History --text "Cell : $display_dir" --width=800 --height=400 --separator=" " --column=version --column=owner --column=time '"$context"
-    eval $cmd
+    set cmd = 'zenity --list --radiolist --title=lspCDSDMSVN_History --text "Select Means Rollback\nCell : $display_dir" --width=800 --height=400 --separator=" " --column="" --column=version --column=owner --column=time '"$context"
+    set sel = `eval $cmd`
+    if ($sel != "") then
+        set cmd = 'zenity --question --title="Conform" --text="Do you want to rollbak ..." --no-wrap --switch --extra-button="YES" --extra-button="NO"'
+        set confirm = `eval $cmd`
+        if ($confirm == "YES") then
+            svn up -r $sel $svn_cmd_dir >&! $tmp_file_st
+            if (($status != 0) || (`cat $tmp_file_st | grep -Ec "\sW[0-9]+:\s|\sE[0-9]+:\s"`)) then
+			    cat $tmp_file_st >>&! $tmp_file_log
+		        echo "  ==> Above ERROR at step 2" >>&! $tmp_file_log
+	            goto Report
+            endif
+			cat $tmp_file_st >>&! $tmp_file_log
+            
+            ####if checkout then rollback, need unlock; 
+            ####if not checkout then rollback, no need unlock;even svn unlock meet error, it does no matter
+            set include_key = `sed 's/\s\+//g' $LSPCDSDMSVN_HOME/config/include.cfg  | grep -Ev '^\s*#|^\s*$' | sed -n '1{h};2,${H};${g;s/\n/|/g;p}'`
+            foreach item (`find $svn_cmd_dir -maxdepth 1 -type f`)
+                set filename = `basename $item`
+                set flag = `echo $filename | grep -Ec "$include_key"`
+                if ($flag) then
+                    svn unlock $item
+                endif
+            end
+            
+            echo "[INFOR] SVN Rollback succeeful." >>&! $tmp_file_log
+            echo "succeed"
+            goto Report
+        endif
+    endif
 endif
 
 ####for skill callback

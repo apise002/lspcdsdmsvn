@@ -89,9 +89,16 @@ echo $svn_cmd_dir | xargs -n 1 | xargs -i echo "    path => {}" >>&! $tmp_file_l
 echo "" >>&! $tmp_file_log
 
 foreach item (`find $svn_cmd_dir -maxdepth $find_level -type f | sed "s#$lib_dir/$lib/##"`)
-    if ((`echo $item | sed -r "s/(.)/\1\n/g" | grep -c "/"` == 2) && (`echo $item | grep -Ec "$include_key"`) || \
-        (`echo $item | sed -r "s/(.)/\1\n/g" | grep -c "/"` == 1) && (`echo $item | grep -Evc "$ignore_key"`) || \
-        (`echo $item | sed -r "s/(.)/\1\n/g" | grep -c "/"` == 0) && (`echo $item | grep -Evc "$ignore_key"`)    ) then
+    if (`echo $item | sed -r "s/(.)/\1\n/g" | grep -c "/"` == 2) then
+        set filename = `basename $item`
+        set flag = `echo $filename | grep -Ec "$include_key"`
+    else if((`echo $item | sed -r "s/(.)/\1\n/g" | grep -c "/"` == 1) || (`echo $item | sed -r "s/(.)/\1\n/g" | grep -c "/"` == 0)) then
+        set filename = `basename $item`
+        set flag = `echo $filename | grep -Evc "$ignore_key"`
+    else
+        set flag = 0
+    endif
+    if ($flag) then
         svn st $lib_dir/$lib/$item >&! $tmp_file_st
 	    if (($status != 0) || (`cat $tmp_file_st | grep -Ec "\sW[0-9]+:\s|\sE[0-9]+:\s"`)) then
             cat $tmp_file_st >>&! $tmp_file_log

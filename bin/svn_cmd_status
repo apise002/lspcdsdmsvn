@@ -76,9 +76,16 @@ foreach line (`cat $tmp_file_st | sed -r 's#\s#@#g' | sed -r 's#\%#\\%#g'`)
 	    printf "$line  ==>  Local Missing\n" | sed -r 's/((:?^|\s)(:?\!))\s+[0-9]+\s+/\1 /' >>&! $tmp_file_log
 	else if (-f $lib_dir/$lib/$item) then
 	    if (`printf "$line\n" | grep -Ec "^\?\s"`) then
-		    if ((`echo $item | sed -r "s/(.)/\1\n/g" | grep -c "/"` == 2) && (`echo $item | grep -Ec "$include_key"`) || \
-                (`echo $item | sed -r "s/(.)/\1\n/g" | grep -c "/"` == 1) && (`echo $item | grep -Evc "$ignore_key"`) || \
-                (`echo $item | sed -r "s/(.)/\1\n/g" | grep -c "/"` == 0) && (`echo $item | grep -Evc "$ignore_key"`)    ) then
+            if (`echo $item | sed -r "s/(.)/\1\n/g" | grep -c "/"` == 2) then
+                set filename = `basename $item`
+                set flag = `echo $filename | grep -Ec "$include_key"`
+            else if((`echo $item | sed -r "s/(.)/\1\n/g" | grep -c "/"` == 1) || (`echo $item | sed -r "s/(.)/\1\n/g" | grep -c "/"` == 0)) then
+                set filename = `basename $item`
+                set flag = `echo $filename | grep -Evc "$ignore_key"`
+            else
+                set flag = 0
+            endif
+		    if ($flag) then
 		    	printf "$line\n" >>&! $tmp_file_log
 		    endif
 		else if (`printf "$line\n" | grep -Ec "(^|\s)(K|O|B)\s"`) then

@@ -18,20 +18,33 @@ Cadence Virtuoso Design Management System using svn<br>
 6、如果有cellview下面的文件需要进行svn管理，可以在config目录下的include.cfg中添加，支持egrep的正则匹配；<br>
 <br>
 ## 环境必备<br>
-1、必须安装csh，路径/bin/csh；<br>
+1、必须安装csh，路径/bin/csh；如果非此路径，请修改bin目录下所有文件中的csh路径为当前系统的csh路径<br>
 2、必须安装zenity；<br>
-3、必须安装svn；<br>
+3、必须安装svn，建议版本为1.7及以上，本项目使用1.8；<br>
 <br>
 ## tool安装步骤<br>
 1、下载解压数据包到某个路径；<br>
 2、修改lspcdsdmsvn.cshrc第一行的路径为解压之后的路径；<br>
 3、cd $LSPCDSDMSVN_HOME/bin目录，查看里面所有的文件是否是可执行状态，如果不是，执行chmod +x *；<br>
 <br>
+## config说明<br>
+项目中config文件夹有2个cfg，说明如下：<br>
+ignore.cfg：只作用到libname和cellname下的文件或者文件夹，指定某些pattern的文件或者文件夹不进行svn管理，默认进行管理。语法为egrep的正则；<br>
+include.cfg：只作用到viewname下的文件，指定某些pattern的文件进行svn管理，默认不进行管理。语法为egrep的正则；<br>
+<br>
 ## 使用步骤<br>
 1、在cds.lib的同级目录下执行lspcdsdmsvn_init；如果已经执行过无需再执行(手动初始化可以参考lspcdsdmsvn_init脚本步骤)；<br>
 2、启动virtuoso；<br>
 3、enjoy it；<br>
 <br>
+## 使用场景说明<br>
+svn管理的是Library Manager下的library，即.svn文件夹要存在于libname目录下，不能存在于libname同级别目录。这样有以下好处：<br>
+1、有.svn信息的libname出现memu菜单，没有svn信息的libname不会出现menu菜单；<br>
+2、支持来自不用svn server的libname，也支持local libname。有几个svn的libname，就需要svn co几次；<br>
+<br>
+## 特殊注意说明<br>
+1、支持tag，一定要通过memu增加、删除、修改tag信息，不要手动编辑文件，防止版本信息不一致。当然，如果熟练使用svn的cmd，可自行规避问题。<br>
+<br>
 ## 维护说明<br>
-基于自己的小项目自主研发，已经实现最基本的多人数据协同开发。新需求可以自行添加，有时间也会不定期更新。欢迎交流。<br>
+基于自己的团队项目开发场景，自主研发，已经实现最基本的多人数据协同开发。新需求可以自行添加，有时间也会不定期更新。欢迎交流。<br>
 <br>
